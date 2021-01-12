@@ -446,28 +446,420 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.street:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_mapbox_streets));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_mapbox_streets), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
             case R.id.outdoor:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_outdoors));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_outdoors), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
             case R.id.satellite:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_satellite));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_satellite), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
             case R.id.satellite_street:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_satellite_streets));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_satellite_streets), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
             case R.id.traffic_day:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_traffic_day));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_traffic_day), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
             case R.id.traffic_night:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_traffic_night));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_traffic_night), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
             case R.id.light:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_light));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_light), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
             case R.id.dark:
-                mapboxMap.setStyle(getString(R.string.mapbox_style_dark));
+                mapboxMap.setStyle(getString(R.string.mapbox_style_dark), new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        initLocateMe();
+
+                        initSearchFab();
+
+                        addUserLocations();
+
+                        enableLocationComponent(style);
+
+                        addDestinationIconSymbolLayer(style);
+
+                        mapboxMap.addOnMapClickListener(MainActivity.this);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(button.getText().toString().equals("Navigate")){
+                                    getRoute(originPoint, destinationPoint);
+                                    button.setBackgroundResource(R.color.colorPrimary);
+                                    button.setText("Start Navigation");
+
+                                    // Move map camera to the selected location
+                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                            new CameraPosition.Builder()
+                                                    .target(new LatLng(middlePointLat,
+                                                            middlePointLong))
+                                                    .zoom(zoomLevel)
+                                                    .build()), 4000);
+                                } else {
+                                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                                    button.setText("Navigate");
+                                    boolean simulateRoute = true;
+                                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                            .directionsRoute(currentRoute)
+                                            .shouldSimulateRoute(simulateRoute)
+                                            .build();
+                                    // Call this method with Context from within an Activity
+                                    NavigationLauncher.startNavigation(MainActivity.this, options);
+                                }
+
+                            }
+                        });
+                        // Create an empty GeoJSON source using the empty feature collection
+                        setUpSource(style);
+
+                        // Set up a new symbol layer for displaying the searched location's feature coordinates
+                        setupLayer(style);
+                    }
+                });
                 break;
         }
         return super.onOptionsItemSelected(item);
