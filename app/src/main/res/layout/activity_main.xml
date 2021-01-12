@@ -21,9 +21,10 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:background="#ccc"
-        android:enabled="false"
-        android:text="Start navigation"
+        android:background="@color/colorPrimaryDark"
+        android:enabled="true"
+        android:text="Navigate"
+        android:visibility="visible"
         android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="@+id/maps"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,8 +38,20 @@
         android:layout_margin="16dp"
         android:tint="@android:color/white"
         app:backgroundTint="@color/design_default_color_primary_dark"
-        app:layout_constraintBottom_toTopOf="@+id/startButton"
+        app:layout_constraintBottom_toTopOf="@+id/fab_locate_me"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_search_category_default" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_locate_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/design_default_color_primary_dark"
+        app:layout_constraintBottom_toTopOf="@+id/startButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_my_location_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

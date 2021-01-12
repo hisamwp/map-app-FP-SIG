@@ -82,12 +82,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     private String geojsonSourceLayerId = "geojsonSourceLayerId";
     private String symbolIconId = "symbolIconId";
+    Point destinationPoint, originPoint;
+    int zoomLevel;
+    Double middlePointLat, middlePointLong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
+
+        button = findViewById(R.id.startButton);
 
         mapView = findViewById(R.id.maps);
         mapView.onCreate(savedInstanceState);
@@ -100,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.mapboxMap.setStyle(getString(R.string.mapbox_style_traffic_day), new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                initLocateMe();
+
                 initSearchFab();
 
                 addUserLocations();
@@ -109,17 +116,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 addDestinationIconSymbolLayer(style);
 
                 mapboxMap.addOnMapClickListener(MainActivity.this);
-                button = findViewById(R.id.startButton);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean simulateRoute = true;
-                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                .directionsRoute(currentRoute)
-                                .shouldSimulateRoute(simulateRoute)
-                                .build();
-                        // Call this method with Context from within an Activity
-                        NavigationLauncher.startNavigation(MainActivity.this, options);
+                        if(button.getText().toString().equals("Navigate")){
+                            getRoute(originPoint, destinationPoint);
+                            button.setBackgroundResource(R.color.colorPrimary);
+                            button.setText("Start Navigation");
+
+                            // Move map camera to the selected location
+                            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                                    new CameraPosition.Builder()
+                                            .target(new LatLng(middlePointLat,
+                                                    middlePointLong))
+                                            .zoom(zoomLevel)
+                                            .build()), 4000);
+                        } else {
+                            button.setBackgroundResource(R.color.colorPrimaryDark);
+                            button.setText("Navigate");
+                            boolean simulateRoute = true;
+                            NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                    .directionsRoute(currentRoute)
+                                    .shouldSimulateRoute(simulateRoute)
+                                    .build();
+                            // Call this method with Context from within an Activity
+                            NavigationLauncher.startNavigation(MainActivity.this, options);
+                        }
+
                     }
                 });
                 // Create an empty GeoJSON source using the empty feature collection
@@ -127,6 +150,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // Set up a new symbol layer for displaying the searched location's feature coordinates
                 setupLayer(style);
+            }
+        });
+    }
+
+    private void initLocateMe() {
+        findViewById(R.id.fab_locate_me).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                        new CameraPosition.Builder()
+                                .target(new LatLng(
+                                        locationComponent.getLastKnownLocation().getLatitude(),
+                                        locationComponent.getLastKnownLocation().getLongitude()))
+                                .zoom(15)
+                                .build()), 4000);
             }
         });
     }
@@ -178,9 +216,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressWarnings( {"MissingPermission"})
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
+        if(currentRoute != null){
+            navigationMapRoute.removeRoute();
+            button.setBackgroundResource(R.color.colorPrimaryDark);
+            button.setText("Navigate");
+        }
 
-        Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-        Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+        destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+        originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
@@ -188,23 +231,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             source.setGeoJson(Feature.fromGeometry(destinationPoint));
         }
 
-        getRoute(originPoint, destinationPoint);
-        button.setEnabled(true);
-        button.setBackgroundResource(R.color.colorPrimary);
-
         Double latSource = locationComponent.getLastKnownLocation().getLatitude();
         Double longSource = locationComponent.getLastKnownLocation().getLongitude();
 
-        Double middlePointLat = (point.getLatitude() + latSource)/2;
-        Double middlePointLong = (point.getLongitude() + longSource)/2;
+        middlePointLat = (point.getLatitude() + latSource)/2;
+        middlePointLong = (point.getLongitude() + longSource)/2;
 
-        int zoomLevel = calculateDistance(originPoint, destinationPoint);
+        zoomLevel = calculateDistance(originPoint, destinationPoint);
 
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                 new CameraPosition.Builder()
-                        .target(new LatLng( middlePointLat,
-                                middlePointLong))
-                        .zoom(zoomLevel)
+                        .target(new LatLng( point.getLatitude(),
+                                point.getLongitude()))
+                        .zoom(15)
                         .build()), 4000);
         return true;
     }
@@ -357,11 +396,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Create a new FeatureCollection and add a new Feature to it using selectedCarmenFeature above.
             // Then retrieve and update the source designated for showing a selected location's symbol layer icon
             if (mapboxMap != null) {
+                if(currentRoute != null){
+                    navigationMapRoute.removeRoute();
+                    button.setBackgroundResource(R.color.colorPrimaryDark);
+                    button.setText("Navigate");
+                }
                 Style style = mapboxMap.getStyle();
                 if (style != null) {
-                    Point destinationPoint = Point.fromLngLat(((Point) selectedCarmenFeature.geometry()).longitude(), ((Point) selectedCarmenFeature.geometry()).latitude());
+                    destinationPoint = Point.fromLngLat(((Point) selectedCarmenFeature.geometry()).longitude(), ((Point) selectedCarmenFeature.geometry()).latitude());
 
-                    Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                    originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                             locationComponent.getLastKnownLocation().getLatitude());
 
                     GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
@@ -369,27 +413,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         source.setGeoJson(Feature.fromGeometry(destinationPoint));
                     }
 
-                    getRoute(originPoint, destinationPoint);
-                    button.setEnabled(true);
-                    button.setBackgroundResource(R.color.colorPrimary);
-
                     Double latSource = locationComponent.getLastKnownLocation().getLatitude();
                     Double longSource = locationComponent.getLastKnownLocation().getLongitude();
 
                     Double latDest = ((Point) selectedCarmenFeature.geometry()).latitude();
                     Double longDest = ((Point) selectedCarmenFeature.geometry()).longitude();
 
-                    Double middlePointLat = (latDest + latSource)/2;
-                    Double middlePointLong = (longDest + longSource)/2;
+                    middlePointLat = (latDest + latSource)/2;
+                    middlePointLong = (longDest + longSource)/2;
 
-                    int zoomLevel = calculateDistance(originPoint, destinationPoint);
+                    zoomLevel = calculateDistance(originPoint, destinationPoint);
 
                     // Move map camera to the selected location
                     mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
                             new CameraPosition.Builder()
-                                    .target(new LatLng(middlePointLat,
-                                            middlePointLong))
-                                    .zoom(zoomLevel)
+                                    .target(new LatLng(latDest,
+                                            longDest))
+                                    .zoom(15)
                                     .build()), 4000);
                 }
             }
@@ -431,6 +471,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(currentRoute !=null){
+            //delete route and zoom to destinate location
+            navigationMapRoute.removeRoute();
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                    new CameraPosition.Builder()
+                            .target(new LatLng(destinationPoint.latitude(),
+                                    destinationPoint.longitude()))
+                            .zoom(15)
+                            .build()), 4000);
+            button.setBackgroundResource(R.color.colorPrimaryDark);
+            button.setText("Navigate");
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
