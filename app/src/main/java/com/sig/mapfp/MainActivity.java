@@ -878,6 +878,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .build()), 4000);
             button.setBackgroundResource(R.color.colorPrimaryDark);
             button.setText("Navigate");
+            currentRoute = null;
         } else {
             super.onBackPressed();
         }
