@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/street"
+        android:title="Street" />
+    <item
+        android:id="@+id/outdoor"
+        android:title="Outdoor" />
+    <item
+        android:id="@+id/satellite"
+        android:title="Satellite" />
+    <item
+        android:id="@+id/satellite_street"
+        android:title="Satellite Street" />
+    <item
+        android:id="@+id/traffic_day"
+        android:title="Traffic - Day" />
+    <item
+        android:id="@+id/traffic_night"
+        android:title="Traffic - Night" />
+    <item
+        android:id="@+id/light"
+        android:title="Light" />
+    <item
+        android:id="@+id/dark"
+        android:title="Dark" />
+</menu>
